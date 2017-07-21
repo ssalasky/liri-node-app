@@ -1,52 +1,134 @@
 //variables needed to pull twitter information
 var access = require("./keys.js");
-var key = access.twitterKeys;
 var Twitter = require('twitter');
+var client = new Twitter(access.twitterKeys);
 
-//variables needed to access spotify
-var spotify = new Spotify({
-  id: <your spotify client id>,
-  secret: <your spotify client secret>
-});
+// variables needed to access spotify
 var Spotify = require('node-spotify-api');
+var spotify = new Spotify(access.spotifyKeys);
 
 //variable needed to call movie data
 var request = require('request');
 
+//do what it says install
+var fs = require("fs");
 
+//accepting the command
 var command = process.argv[2];
 
+//functions to process command inputs
 if (command === "my-tweets") {
-	var params = {screen_name: 'nodejs'};
+	var params = {
+		screen_name: '@SAClass124',
+		count: 20
+	};
 
 	client.get('statuses/user_timeline', params, function(error, tweets, response) {
  		if (!error) {
-    		console.log(tweets);
+ 			for (var i=0; i<20; i++) {
+ 				console.log("New Tweet: ");
+	 			console.log(tweets[i].text);
+	 			console.log(tweets[i].created_at);
+	 			console.log("-------------");
+ 			}
  		}
 	});
 };
 
 if (command === "spotify-this-song") {
-	var song = process.argv[3];
+	var song = "The Sign";
 
-	spotify.search({type: 'track', query: song}, function(err, data) {
+	for (var s=3; s < process.argv.length; s++){
+		if (3 === s) {
+			song = process.argv[s];
+			console.log(song);
+		} else {
+			song += "+" + process.argv[s];
+			console.log(song);
+		};
+	return song;
+	};
+
+	console.log(song);
+
+	var params = {
+		type: "track",
+		query: song
+	};
+
+	spotify.search(params, function(err, data) {
   		if (err) {
     		return console.log('Error occurred: ' + err);
-  		}
- 
-		console.log(data); 
+  		} else {
+  			var info = data.tracks.items;
+
+  			for (var i=0; i<info.length; i++) {
+  				var album = info[i].album;
+  				var artist = info[i].artists;
+
+  				console.log(album.name);
+  				console.log(artist.name);
+  				console.log(info[i].name);
+  				console.log(info[i].preview_url);
+  				console.log("---------------------");
+  			};
+  		};
+		//console.log(data); 
 	});
 };
 
 if (command === "movie-this") {
-	var movie = process.argv[2];
+	var movie = "Mr. Nobody";
 
-	var queryURL = "http://www.omdbapi.com/?apikey=40e9cece&t=" + movie;
-
-	$.ajax {
-		url: queryURL,
-		method: "GET"
-	}.done function() {
-		console.log(response);
+	for (var m=3; m < process.argv.length; m++){
+		if (3 === m) {
+			movie = process.argv[m];
+		} else {
+			movie += "+" + process.argv[m];
+		};
+	return movie;
 	};
+
+	var queryURL = "http://www.omdbapi.com/?t=" + movie + "&y=&plot=short&tomatoes=true&apikey=40e9cece";
+
+	request(queryURL, function(err, response, body) {
+		if (err) {
+			return console.log('Error occurred: ' + err);
+		} else {
+			if (err === null && response.statusCode === 200) {
+				var data = JSON.parse(body);
+
+				if (data.Year != undefined) {
+					console.log("Title: " + data.Title);
+					console.log("Year: " + data.Year);
+					console.log("IMDB Rating: " + data.imdbRating);
+					console.log("Country: " + data.Country);
+					console.log("Langauge: " + data.Language);
+					console.log("Plot: " + data.Plot);
+					console.log("Actors: " + data.Actors);
+
+					if (data.tomatoURL != undefined) {
+						console.log("Rotten Tomatoes: " + data.tomatoURL);
+					} else {
+						console.log(data.Error);
+					};
+				};
+			};
+		};
+	});
+};
+
+if (command === "doWhatItSays") {
+	var fileName = "random.txt";
+
+	fs.readFile(fileName, "utf8", function(err, data) {
+		if (err) {
+			return console.log('Error occurred: ' + err);
+		} else {
+			var dataArr = data.split(",");
+			var song = dataArr[1];
+
+			command === "spotify-this-song";
+		};
+	});
 };
