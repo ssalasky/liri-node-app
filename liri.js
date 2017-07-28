@@ -16,8 +16,22 @@ var fs = require("fs");
 //accepting the command
 var command = process.argv[2];
 
+switch(command) {
+	case "my-tweets":
+		tweet();
+		break;
+	case "spotify-this-song":
+		songSearch();
+		break;
+	case "movie-this":
+		movieSearch();
+		break;
+	case "doWhatItSays":
+		doWhatItSays();
+}
+
 //functions to process command inputs
-if (command === "my-tweets") {
+function tweet() {
 	var params = {
 		screen_name: '@SAClass124',
 		count: 20
@@ -35,7 +49,7 @@ if (command === "my-tweets") {
 	});
 };
 
-if (command === "spotify-this-song") {
+function songSearch() {
 	var song = "The Sign";
 
 	for (var s=3; s < process.argv.length; s++){
@@ -49,7 +63,7 @@ if (command === "spotify-this-song") {
 	return song;
 	};
 
-	console.log(song);
+	//console.log(song);
 
 	var params = {
 		type: "track",
@@ -77,7 +91,7 @@ if (command === "spotify-this-song") {
 	});
 };
 
-if (command === "movie-this") {
+function movieSearch() {
 	var movie = "Mr. Nobody";
 
 	for (var m=3; m < process.argv.length; m++){
@@ -118,7 +132,7 @@ if (command === "movie-this") {
 	});
 };
 
-if (command === "doWhatItSays") {
+function doWhatItSays() {
 	var fileName = "random.txt";
 
 	fs.readFile(fileName, "utf8", function(err, data) {
@@ -128,7 +142,7 @@ if (command === "doWhatItSays") {
 			var dataArr = data.split(",");
 			var song = dataArr[1];
 
-			command === "spotify-this-song";
+			songSearch();
 		};
 	});
 };
